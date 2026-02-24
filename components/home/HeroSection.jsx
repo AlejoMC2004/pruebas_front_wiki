@@ -12,9 +12,9 @@ export default function HeroSection({ about, stats }) {
         <div style={s.textBlock}>
           <p style={s.eyebrow}>Research Group · Computer Vision</p>
           <h1 style={s.title}>
-            Grupo de Investigación
+            CVAIL
             <br />
-            <span style={s.titleAccent}>en Visión Computacional</span>
+            <span style={s.titleAccent}>Computer Vision & Artificial Intelligence Laboratory</span>
           </h1>
           <p style={s.body}>{about}</p>
           <div style={s.actions}>
