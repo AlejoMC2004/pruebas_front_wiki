@@ -27,7 +27,7 @@ export default function HeroSection({ about, stats }) {
 
         <div style={s.imagePlaceholder}>
           <img
-            src="/images/logo_HOCV.png"
+            src="./images/logo_HOCV.png"
             alt="Grupo de investigación"
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
