@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata = {
   title: {
-    default: "Wiki · Grupo de Investigación CV",
-    template: "%s | Wiki CV Group",
+    default: "Wiki · Grupo de Investigación CVAIL",
+    template: "%s | Wiki CVAIL",
   },
   description: "Wiki del grupo de investigación en Visión Computacional",
 };
