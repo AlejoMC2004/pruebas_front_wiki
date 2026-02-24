@@ -14,7 +14,7 @@ export default function HeroSection({ about, stats }) {
           <h1 style={s.title}>
             CVAIL
             <br />
-            <span style={s.titleAccent}>Computer Vision & Artificial Intelligence Laboratory</span>
+            <span style={s.titleAccent}>Computer Vision and Artificial Intelligence Laboratory</span>
           </h1>
           <p style={s.body}>{about}</p>
           <div style={s.actions}>
@@ -27,8 +27,8 @@ export default function HeroSection({ about, stats }) {
 
         <div style={s.imagePlaceholder}>
           <img
-            src="./images/logo_HOCV.png"
-            alt="Grupo de investigación"
+            src="/images/logo_HOCV.png"
+            alt="Logo temporal"
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>
