@@ -1,17 +1,44 @@
 // components/layout/Navbar.jsx
 "use client";
 
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { THEME } from "@/styles/theme";
 import { NAV_LINKS } from "@/lib/constants";
+import { hasSession, getUserRole, getUserName } from "@/lib/authGuard";
+import { logout } from "@/lib/authService";
 
-export default function Navbar({ user = "Pauline Lenoir" }) {
+export default function Navbar() {
   const pathname = usePathname();
+  const router   = useRouter();
+
+  const [session,  setSession]  = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [userName, setUserName] = useState("Invitado");
+
+  // Leer sesión en cliente (localStorage no está disponible en SSR)
+  useEffect(() => {
+    setSession(hasSession());
+    setUserRole(getUserRole());
+    setUserName(getUserName() ?? "Invitado");
+  }, [pathname]); // re-evalúa en cada cambio de ruta
+
+  function handleLogout() {
+    logout();
+    setSession(false);
+    setUserRole(null);
+    setUserName("Invitado");
+    router.push("/login");
+  }
+
+  // Filtrar links según rol: "Settings" solo para admins
+  const visibleLinks = NAV_LINKS.filter((link) => {
+    if (link.href === "/settings") return session && userRole === "admin";
+    return true;
+  });
 
   return (
     <nav style={s.nav}>
-      {/* Línea de acento en la parte superior */}
       <div style={s.topAccent} />
 
       {/* Brand */}
@@ -20,19 +47,16 @@ export default function Navbar({ user = "Pauline Lenoir" }) {
         <span style={s.brandText}>Wiki</span>
       </a>
 
-      {/* Links de navegación */}
+      {/* Links */}
       <ul style={s.links}>
-        {NAV_LINKS.map((link) => {
+        {visibleLinks.map((link) => {
           const isActive =
             link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
           return (
             <li key={link.label}>
               <a
                 href={link.href}
-                style={{
-                  ...s.link,
-                  ...(isActive ? s.linkActive : {}),
-                }}
+                style={{ ...s.link, ...(isActive ? s.linkActive : {}) }}
               >
                 {link.label}
               </a>
@@ -59,10 +83,28 @@ export default function Navbar({ user = "Pauline Lenoir" }) {
         />
       </div>
 
-      {/* Usuario */}
+      {/* Usuario / sesión */}
       <div style={s.user}>
-        <div style={s.avatar}>{user.charAt(0)}</div>
-        <span style={s.userName}>{user}</span>
+        {session ? (
+          <>
+            <div style={s.avatar}>{userName.charAt(0).toUpperCase()}</div>
+            <span style={s.userName}>{userName}</span>
+            <button onClick={handleLogout} style={s.logoutBtn} title="Cerrar sesión">
+              ⏏
+            </button>
+          </>
+        ) : (
+          <a href="/login" style={s.loginBtn} title="Iniciar sesión">
+            <div style={s.avatarGuest}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <span style={s.loginBtnText}>Iniciar sesión</span>
+          </a>
+        )}
       </div>
     </nav>
   );
@@ -96,15 +138,12 @@ const s = {
     gap:         "8px",
     marginRight: "20px",
   },
-  brandIcon: {
-    fontSize: "20px",
-    color:    THEME.colors.gold,
-  },
+  brandIcon: { fontSize: "20px", color: THEME.colors.gold },
   brandText: {
-    fontFamily:  THEME.fonts.display,
-    fontWeight:  700,
-    fontSize:    "18px",
-    color:       "#fff",
+    fontFamily:    THEME.fonts.display,
+    fontWeight:    700,
+    fontSize:      "18px",
+    color:         "#fff",
     letterSpacing: "0.02em",
   },
   links: {
@@ -114,34 +153,31 @@ const s = {
     flex:     1,
   },
   link: {
-    display:  "block",
-    padding:  "6px 13px",
+    display:      "block",
+    padding:      "6px 13px",
     borderRadius: THEME.radius.sm,
-    color:    "rgba(255,255,255,0.7)",
-    fontSize: "14px",
-    fontWeight: 600,
-    transition: "all 0.15s",
+    color:        "rgba(255,255,255,0.7)",
+    fontSize:     "14px",
+    fontWeight:   600,
+    transition:   "all 0.15s",
   },
   linkActive: {
     background: THEME.colors.gold,
     color:      THEME.colors.navy,
   },
-  searchWrap: {
-    position:    "relative",
-    marginRight: "12px",
-  },
+  searchWrap: { position: "relative", marginRight: "12px" },
   searchIcon: {
-    position:  "absolute",
-    left:      "10px",
-    top:       "50%",
-    transform: "translateY(-50%)",
-    color:     "rgba(255,255,255,0.4)",
-    fontSize:  "16px",
+    position:      "absolute",
+    left:          "10px",
+    top:           "50%",
+    transform:     "translateY(-50%)",
+    color:         "rgba(255,255,255,0.4)",
+    fontSize:      "16px",
     pointerEvents: "none",
   },
   searchInput: {
     background:   "rgba(255,255,255,0.08)",
-    border:       `1px solid rgba(255,255,255,0.15)`,
+    border:       "1px solid rgba(255,255,255,0.15)",
     borderRadius: THEME.radius.sm,
     padding:      "6px 12px 6px 30px",
     color:        "#fff",
@@ -173,5 +209,44 @@ const s = {
     color:     "rgba(255,255,255,0.82)",
     fontSize:  "13px",
     fontWeight:600,
+  },
+  logoutBtn: {
+    background: "transparent",
+    border:     "none",
+    color:      "rgba(255,255,255,0.5)",
+    fontSize:   "16px",
+    cursor:     "pointer",
+    padding:    "4px",
+    lineHeight: 1,
+    transition: "color 0.15s",
+  },
+  loginBtn: {
+    display:        "flex",
+    alignItems:     "center",
+    gap:            "8px",
+    padding:        "5px 12px 5px 6px",
+    borderRadius:   THEME.radius.sm,
+    border:         "1px solid rgba(255,255,255,0.18)",
+    background:     "rgba(255,255,255,0.07)",
+    color:          "rgba(255,255,255,0.82)",
+    textDecoration: "none",
+    cursor:         "pointer",
+    transition:     "all 0.15s",
+  },
+  avatarGuest: {
+    width:          "28px",
+    height:         "28px",
+    borderRadius:   "50%",
+    background:     "rgba(255,255,255,0.12)",
+    color:          "rgba(255,255,255,0.7)",
+    display:        "flex",
+    alignItems:     "center",
+    justifyContent: "center",
+    flexShrink:     0,
+  },
+  loginBtnText: {
+    fontSize:   "13px",
+    fontWeight: 600,
+    whiteSpace: "nowrap",
   },
 };
