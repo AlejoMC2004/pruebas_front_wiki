@@ -1,0 +1,595 @@
+/* app/calendar/calendar.module.css */
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.exportGroup {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toggleContainer {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toggleBtn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: #fdfaf4;
+  color: #2a2a1e;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid #ddd8c4;
+}
+
+.toggleBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 74, 47, 0.1);
+}
+
+.toggleBtnActive {
+  background: #3b4a2f;
+  color: #fff;
+  border-color: #3b4a2f;
+}
+
+.exportBtn {
+  padding: 10px 24px;
+  background: #c9a84c;
+  color: #2a2a1e;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.2);
+}
+
+.exportBtn:hover {
+  background: #b89540;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+}
+
+.subscribeBtn {
+  padding: 10px 24px;
+  background: #5f7a4a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(95, 122, 74, 0.2);
+}
+
+.subscribeBtn:hover {
+  background: #4d6239;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(95, 122, 74, 0.3);
+}
+
+/* Subscription Info Section */
+.subscribeInfo {
+  background: linear-gradient(135deg, #f5f0e8 0%, #fdfaf4 100%);
+  border: 2px solid #c9a84c;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subscribeTitle {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  color: #3b4a2f;
+  margin: 0 0 12px 0;
+}
+
+.subscribeDesc {
+  color: #2a2a1e;
+  font-size: 14px;
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+.urlBox {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ddd8c4;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.urlCode {
+  flex: 1;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  color: #3b4a2f;
+  word-break: break-all;
+  background: #f9f6f0;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.copyBtn {
+  padding: 8px 16px;
+  background: #3b4a2f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.copyBtn:hover {
+  background: #2a351f;
+  transform: scale(1.05);
+}
+
+.instructions h4 {
+  font-size: 16px;
+  color: #3b4a2f;
+  margin: 0 0 16px 0;
+}
+
+.instructionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.instructionCard {
+  background: #fff;
+  border: 1px solid #ddd8c4;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.instructionCard strong {
+  display: block;
+  color: #3b4a2f;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.instructionCard ol {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #2a2a1e;
+  line-height: 1.7;
+}
+
+.instructionCard li {
+  margin-bottom: 4px;
+}
+
+.instructionCard strong:not(:first-child) {
+  font-weight: 600;
+  color: #5f7a4a;
+}
+
+.exportSmall {
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid #ddd8c4;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.exportSmall:hover {
+  background: #f5f0e8;
+  transform: scale(1.1);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 800px;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: #fdfaf4;
+  border: 1px solid #ddd8c4;
+  border-radius: 10px;
+  padding: 16px 20px;
+  transition: all 0.2s ease;
+}
+
+.row:hover {
+  box-shadow: 0 4px 16px rgba(59, 74, 47, 0.08);
+  transform: translateY(-2px);
+}
+
+.dateBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+  flex-shrink: 0;
+}
+
+.day {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(20px, 5vw, 24px);
+  line-height: 1;
+  color: #3b4a2f;
+}
+
+.month {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 10px;
+  color: #8a876e;
+  letter-spacing: 0.06em;
+}
+
+.indicator {
+  width: 4px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.eventBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.eventTitle {
+  font-weight: 600;
+  font-size: clamp(14px, 3vw, 15px);
+  color: #3b4a2f;
+  word-break: break-word;
+  margin: 0;
+}
+
+.eventType {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.04em;
+}
+
+.calendarContainer {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #ddd8c4;
+  background: #fdfaf4;
+}
+
+.iframe {
+  width: 100%;
+  height: 600px;
+  border: 0;
+}
+
+/* Month Calendar View */
+.calendarView {
+  max-width: 1200px;
+  width: 100%;
+}
+
+.monthNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.monthTitle {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(20px, 4vw, 28px);
+  color: #3b4a2f;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.navBtn,
+.todayBtn {
+  padding: 8px 16px;
+  background: #fdfaf4;
+  border: 2px solid #ddd8c4;
+  border-radius: 8px;
+  color: #2a2a1e;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navBtn:hover,
+.todayBtn:hover {
+  background: #3b4a2f;
+  color: #fff;
+  border-color: #3b4a2f;
+}
+
+.calendarGrid {
+  background: #fdfaf4;
+  border: 1px solid #ddd8c4;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.dayHeaders {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: #3b4a2f;
+  color: #fff;
+}
+
+.dayHeader {
+  padding: 12px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.monthGrid {
+  display: flex;
+  flex-direction: column;
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid #ddd8c4;
+}
+
+.week:last-child {
+  border-bottom: none;
+}
+
+.calendarDay {
+  min-height: 100px;
+  padding: 8px;
+  border-right: 1px solid #ddd8c4;
+  background: #fff;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.calendarDay:hover {
+  background: #f5f0e8;
+}
+
+.calendarDay:nth-child(7) {
+  border-right: none;
+}
+
+.emptyDay {
+  min-height: 100px;
+  background: #f9f6f0;
+  border-right: 1px solid #ddd8c4;
+}
+
+.emptyDay:nth-child(7) {
+  border-right: none;
+}
+
+.today {
+  background: #fffbf0;
+  border: 2px solid #c9a84c;
+}
+
+.dayNumber {
+  font-weight: 700;
+  font-size: 14px;
+  color: #3b4a2f;
+  margin-bottom: 6px;
+}
+
+.today .dayNumber {
+  color: #c9a84c;
+  font-size: 16px;
+}
+
+.dayEvents {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.miniEvent {
+  background: rgba(59, 74, 47, 0.05);
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: #2a2a1e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.miniEvent:hover {
+  background: rgba(59, 74, 47, 0.1);
+  transform: scale(1.02);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toggleContainer {
+    width: 100%;
+  }
+
+  .toggleBtn {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .exportGroup {
+    width: 100%;
+  }
+
+  .exportBtn,
+  .subscribeBtn {
+    flex: 1;
+  }
+
+  .subscribeInfo {
+    padding: 16px;
+  }
+
+  .urlBox {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .copyBtn {
+    width: 100%;
+  }
+
+  .instructionGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .row {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  
+  .dateBlock {
+    min-width: 36px;
+  }
+  
+  .indicator {
+    height: 30px;
+  }
+  
+  .iframe {
+    height: 500px;
+  }
+
+  .monthNav {
+    flex-wrap: wrap;
+  }
+
+  .monthTitle {
+    width: 100%;
+    order: -1;
+    margin-bottom: 12px;
+  }
+
+  .calendarDay {
+    min-height: 80px;
+    padding: 6px;
+  }
+
+  .dayHeader {
+    font-size: 10px;
+    padding: 8px 4px;
+  }
+
+  .miniEvent {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .row {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .dateBlock {
+    min-width: 32px;
+  }
+  
+  .day {
+    font-size: 18px;
+  }
+  
+  .month {
+    font-size: 9px;
+  }
+  
+  .eventTitle {
+    font-size: 13px;
+  }
+  
+  .eventType {
+    font-size: 11px;
+  }
+  
+  .iframe {
+    height: 450px;
+  }
+
+  .calendarDay {
+    min-height: 60px;
+    padding: 4px;
+  }
+
+  .dayNumber {
+    font-size: 12px;
+  }
+
+  .miniEvent {
+    font-size: 8px;
+    padding: 1px 3px;
+  }
+
+  .navBtn,
+  .todayBtn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}

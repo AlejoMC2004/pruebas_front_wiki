@@ -1,17 +1,40 @@
 // app/calendar/page.js
+"use client";
 import PageShell from "@/components/layout/PageShell";
 import { THEME } from "@/styles/theme";
-
-export const metadata = { title: "Calendario" };
+import { useState } from "react";
+import styles from "./calendar.module.css";
+import { 
+  generateICS, 
+  generateMultipleICS, 
+  downloadICS,
+  getMonthDays,
+  getEventsForDate,
+  getMonthName,
+  copySubscriptionURL,
+  getSubscriptionURL
+} from "@/lib/calendar";
 
 export default function CalendarPage() {
-  // TODO: integrar con Google Calendar API o similar
+  // Toggle between list view and month calendar
+  const [view, setView] = useState("list"); // "list" | "month"
+  
+  // State for subscription instructions
+  const [showSubscribeInfo, setShowSubscribeInfo] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
+  
+  // Month navigation
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
+
+  // TODO: integrate with API
   const events = [
-    { date: "2025-03-05", title: "Seminario interno — Depth Estimation",   type: "seminar" },
-    { date: "2025-03-12", title: "Reunión de proyecto VisionAgro",          type: "meeting" },
-    { date: "2025-03-20", title: "Deadline — ECCV 2025 submission",         type: "deadline" },
-    { date: "2025-04-01", title: "Visita académica — Prof. Martínez (UNAL)",type: "visit"    },
-    { date: "2025-04-15", title: "Workshop de Computer Vision",             type: "event"    },
+    { date: "2026-03-05", title: "Internal Seminar — Depth Estimation",   type: "seminar", description: "Presentation of advances in depth estimation" },
+    { date: "2026-03-12", title: "VisionAgro Project Meeting",          type: "meeting", description: "Quarterly project review" },
+    { date: "2026-03-20", title: "Deadline — ECCV 2025 submission",         type: "deadline", description: "Paper submission deadline" },
+    { date: "2026-04-01", title: "Academic Visit — Prof. Martínez (UNAL)",type: "visit", description: "Talk on convolutional neural networks" },
+    { date: "2026-04-15", title: "Computer Vision Workshop",             type: "event", description: "Workshop on advanced techniques" },
   ];
 
   const typeColors = {
@@ -22,95 +45,244 @@ export default function CalendarPage() {
     event:    THEME.colors.gold,
   };
 
+  // Export functions
+  const handleExportEvent = (event) => {
+    const icsContent = generateICS(event);
+    downloadICS(icsContent, `${event.title.slice(0, 20)}.ics`);
+  };
+
+  const handleExportAll = () => {
+    const icsContent = generateMultipleICS(events);
+    downloadICS(icsContent, 'cvail-calendar.ics');
+  };
+
+  // Function to copy subscription URL
+  const handleCopySubscriptionURL = async () => {
+    try {
+      await copySubscriptionURL();
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 3000);
+    } catch (err) {
+      console.error('Error copying URL:', err);
+      alert('Could not copy URL. Please copy it manually.');
+    }
+  };
+
+  // Month navigation
+  const goToPreviousMonth = () => {
+    setCurrentDate(new Date(currentYear, currentMonth - 1, 1));
+  };
+
+  const goToNextMonth = () => {
+    setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
+  };
+
+  const goToToday = () => {
+    setCurrentDate(new Date());
+  };
+
+  const weeks = getMonthDays(currentYear, currentMonth);
+
   return (
     <PageShell
-      title="Calendario"
-      subtitle="Eventos, seminarios, reuniones y deadlines del grupo."
+      title="Calendar"
+      subtitle="Group events, seminars, meetings and deadlines."
     >
-      <div style={s.list}>
-        {events.map((ev, i) => {
-          const color = typeColors[ev.type] || THEME.colors.muted;
-          const d = new Date(ev.date + "T00:00:00");
-          return (
-            <div key={i} style={s.row}>
-              <div style={s.dateBlock}>
-                <span style={s.day}>
-                  {d.toLocaleDateString("es-ES", { day: "2-digit" })}
-                </span>
-                <span style={s.month}>
-                  {d.toLocaleDateString("es-ES", { month: "short" }).toUpperCase()}
-                </span>
+      {/* Top controls */}
+      <div className={styles.controls}>
+        {/* View Toggle */}
+        <div className={styles.toggleContainer}>
+          <button
+            onClick={() => setView("list")}
+            className={`${styles.toggleBtn} ${view === "list" ? styles.toggleBtnActive : ""}`}
+          >
+            📋 List
+          </button>
+          <button
+            onClick={() => setView("month")}
+            className={`${styles.toggleBtn} ${view === "month" ? styles.toggleBtnActive : ""}`}
+          >
+            📅 Month
+          </button>
+        </div>
+
+        {/* Export Options */}
+        <div className={styles.exportGroup}>
+          <button onClick={handleExportAll} className={styles.exportBtn}>
+            📥 Download .ics
+          </button>
+          <button 
+            onClick={() => setShowSubscribeInfo(!showSubscribeInfo)} 
+            className={styles.subscribeBtn}
+          >
+            🔄 Subscribe {showSubscribeInfo ? '▼' : '▶'}
+          </button>
+        </div>
+      </div>
+
+      {/* Subscription Instructions */}
+      {showSubscribeInfo && (
+        <div className={styles.subscribeInfo}>
+          <h3 className={styles.subscribeTitle}>🔄 Auto-sync subscription</h3>
+          <p className={styles.subscribeDesc}>
+            Use this URL to subscribe to the calendar. It will update automatically when we add new events.
+          </p>
+          
+          <div className={styles.urlBox}>
+            <code className={styles.urlCode}>
+              {getSubscriptionURL()}
+            </code>
+            <button 
+              onClick={handleCopySubscriptionURL} 
+              className={styles.copyBtn}
+            >
+              {copySuccess ? '✓ Copied' : '📋 Copy'}
+            </button>
+          </div>
+
+          <div className={styles.instructions}>
+            <h4>📍 How to subscribe:</h4>
+            <div className={styles.instructionGrid}>
+              <div className={styles.instructionCard}>
+                <strong>Google Calendar:</strong>
+                <ol>
+                  <li>Open Google Calendar</li>
+                  <li>Click <strong>+</strong> next to "Other calendars"</li>
+                  <li>Select <strong>"From URL"</strong></li>
+                  <li>Paste the copied URL</li>
+                  <li>Click <strong>"Add calendar"</strong></li>
+                </ol>
               </div>
-              <div style={{ ...s.indicator, background: color }} />
-              <div style={s.eventBody}>
-                <p style={s.eventTitle}>{ev.title}</p>
-                <span style={{ ...s.eventType, color }}>
-                  {ev.type.charAt(0).toUpperCase() + ev.type.slice(1)}
-                </span>
+              <div className={styles.instructionCard}>
+                <strong>Apple Calendar:</strong>
+                <ol>
+                  <li>Open Calendar</li>
+                  <li>File → <strong>New Calendar Subscription</strong></li>
+                  <li>Paste the URL</li>
+                  <li>Click <strong>"Subscribe"</strong></li>
+                </ol>
+              </div>
+              <div className={styles.instructionCard}>
+                <strong>Outlook:</strong>
+                <ol>
+                  <li>Open Outlook Calendar</li>
+                  <li>Add calendar → <strong>From Internet</strong></li>
+                  <li>Paste the URL</li>
+                  <li>Click <strong>"OK"</strong></li>
+                </ol>
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        </div>
+      )}
+
+      {/* List View */}
+      {view === "list" && (
+        <div className={styles.list}>
+          {events.map((ev, i) => {
+            const color = typeColors[ev.type] || THEME.colors.muted;
+            const d = new Date(ev.date + "T00:00:00");
+            return (
+              <div key={i} className={styles.row}>
+                <div className={styles.dateBlock}>
+                  <span className={styles.day}>
+                    {d.toLocaleDateString("es-ES", { day: "2-digit" })}
+                  </span>
+                  <span className={styles.month}>
+                    {d.toLocaleDateString("es-ES", { month: "short" }).toUpperCase()}
+                  </span>
+                </div>
+                <div className={styles.indicator} style={{ background: color }} />
+                <div className={styles.eventBody}>
+                  <p className={styles.eventTitle}>{ev.title}</p>
+                  <span className={styles.eventType} style={{ color }}>
+                    {ev.type.charAt(0).toUpperCase() + ev.type.slice(1)}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleExportEvent(ev)}
+                  className={styles.exportSmall}
+                  title="Export this event"
+                >
+                  📥
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Month Calendar View */}
+      {view === "month" && (
+        <div className={styles.calendarView}>
+          {/* Month Navigation */}
+          <div className={styles.monthNav}>
+            <button onClick={goToPreviousMonth} className={styles.navBtn}>
+              ← Previous
+            </button>
+            <h2 className={styles.monthTitle}>
+              {getMonthName(currentMonth)} {currentYear}
+            </h2>
+            <button onClick={goToToday} className={styles.todayBtn}>
+              Today
+            </button>
+            <button onClick={goToNextMonth} className={styles.navBtn}>
+              Next →
+            </button>
+          </div>
+
+          {/* Calendar Grid */}
+          <div className={styles.calendarGrid}>
+            {/* Day headers */}
+            <div className={styles.dayHeaders}>
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className={styles.dayHeader}>{day}</div>
+              ))}
+            </div>
+
+            {/* Calendar days */}
+            <div className={styles.monthGrid}>
+              {weeks.map((week, weekIdx) => (
+                <div key={weekIdx} className={styles.week}>
+                  {week.map((day, dayIdx) => {
+                    if (!day) {
+                      return <div key={dayIdx} className={styles.emptyDay} />;
+                    }
+
+                    const dayEvents = getEventsForDate(events, currentYear, currentMonth, day);
+                    const isToday = 
+                      day === new Date().getDate() && 
+                      currentMonth === new Date().getMonth() && 
+                      currentYear === new Date().getFullYear();
+
+                    return (
+                      <div 
+                        key={dayIdx} 
+                        className={`${styles.calendarDay} ${isToday ? styles.today : ''}`}
+                      >
+                        <div className={styles.dayNumber}>{day}</div>
+                        <div className={styles.dayEvents}>
+                          {dayEvents.map((ev, evIdx) => (
+                            <div 
+                              key={evIdx} 
+                              className={styles.miniEvent}
+                              style={{ borderLeft: `3px solid ${typeColors[ev.type]}` }}
+                              title={ev.title}
+                            >
+                              {ev.title.length > 20 ? ev.title.slice(0, 20) + '...' : ev.title}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </PageShell>
   );
 }
 
-const s = {
-  list: {
-    display:       "flex",
-    flexDirection: "column",
-    gap:           "12px",
-    maxWidth:      "680px",
-  },
-  row: {
-    display:    "flex",
-    gap:        "16px",
-    alignItems: "center",
-    background: THEME.colors.card,
-    border:     `1px solid ${THEME.colors.border}`,
-    borderRadius:THEME.radius.md,
-    padding:    "16px 20px",
-  },
-  dateBlock: {
-    display:        "flex",
-    flexDirection:  "column",
-    alignItems:     "center",
-    minWidth:       "44px",
-  },
-  day: {
-    fontFamily:  THEME.fonts.display,
-    fontWeight:  700,
-    fontSize:    "24px",
-    lineHeight:  1,
-    color:       THEME.colors.navy,
-  },
-  month: {
-    fontFamily:    THEME.fonts.mono,
-    fontSize:      "10px",
-    color:         THEME.colors.muted,
-    letterSpacing: "0.06em",
-  },
-  indicator: {
-    width:        "4px",
-    height:       "36px",
-    borderRadius: "2px",
-    flexShrink:   0,
-  },
-  eventBody: {
-    display:       "flex",
-    flexDirection: "column",
-    gap:           "2px",
-  },
-  eventTitle: {
-    fontWeight: 600,
-    fontSize:   "15px",
-    color:      THEME.colors.navy,
-  },
-  eventType: {
-    fontSize:      "12px",
-    fontWeight:    600,
-    textTransform: "capitalize",
-    letterSpacing: "0.04em",
-  },
-};

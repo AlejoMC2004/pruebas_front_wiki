@@ -27,7 +27,7 @@ export default function HeroSection({ about, stats }) {
 
         <div style={s.imagePlaceholder}>
           <img
-            src="/images/logo_HOCV.png"
+            src="/images/logo-handson-256.png"
             alt="Logo temporal"
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
