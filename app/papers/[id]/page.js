@@ -21,11 +21,11 @@ export default async function PaperPage({ params }) {
         {/* Meta */}
         <div style={s.meta}>
           <div style={s.metaRow}>
-            <span style={s.metaLabel}>Autores</span>
+            <span style={s.metaLabel}>Authors</span>
             <span style={s.metaValue}>{formatAuthors(paper.authors)}</span>
           </div>
           <div style={s.metaRow}>
-            <span style={s.metaLabel}>Publicado en</span>
+            <span style={s.metaLabel}>Published in</span>
             <span style={s.metaValue}>{paper.venue} — {paper.year}</span>
           </div>
           {paper.doi && (
@@ -60,10 +60,10 @@ export default async function PaperPage({ params }) {
         <div style={s.actions}>
           {paper.pdf_url && paper.pdf_url !== "#" && (
             <a href={paper.pdf_url} style={s.btnPrimary} target="_blank" rel="noreferrer">
-              Descargar PDF
+              Download PDF
             </a>
           )}
-          <a href="/papers" style={s.btnBack}>← Volver a Papers</a>
+          <a href="/papers" style={s.btnBack}>← Back to Papers</a>
         </div>
       </article>
     </PageShell>

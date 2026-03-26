@@ -14,6 +14,7 @@ import {
   copySubscriptionURL,
   getSubscriptionURL
 } from "@/lib/calendar";
+import { CALENDAR_EVENTS } from "@/lib/calendarEvents";
 
 export default function CalendarPage() {
   // Toggle between list view and month calendar
@@ -28,14 +29,8 @@ export default function CalendarPage() {
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
 
-  // TODO: integrate with API
-  const events = [
-    { date: "2026-03-05", title: "Internal Seminar — Depth Estimation",   type: "seminar", description: "Presentation of advances in depth estimation" },
-    { date: "2026-03-12", title: "VisionAgro Project Meeting",          type: "meeting", description: "Quarterly project review" },
-    { date: "2026-03-20", title: "Deadline — ECCV 2025 submission",         type: "deadline", description: "Paper submission deadline" },
-    { date: "2026-04-01", title: "Academic Visit — Prof. Martínez (UNAL)",type: "visit", description: "Talk on convolutional neural networks" },
-    { date: "2026-04-15", title: "Computer Vision Workshop",             type: "event", description: "Workshop on advanced techniques" },
-  ];
+  // Fuente única de eventos: lib/calendarEvents.js
+  const events = CALENDAR_EVENTS;
 
   const typeColors = {
     seminar:  THEME.colors.teal,

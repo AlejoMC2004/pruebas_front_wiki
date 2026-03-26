@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { THEME } from "@/styles/theme";
 import { NAV_LINKS } from "@/lib/constants";
@@ -34,19 +35,19 @@ export default function Navbar() {
       <nav style={s.nav}>
         <div style={s.topAccent} />
 
-        <a href="/" style={s.brand}>
+        <Link href="/" style={s.brand}>
           <span style={s.brandIcon}>◈</span>
           <span style={s.brandText}>Wiki</span>
-        </a>
+        </Link>
 
         <ul style={s.links}>
-          {NAV_LINKS.map((link) => {
+          {NAV_LINKS.filter((link) => link.href !== "/settings" || user?.role === "admin").map((link) => {
             const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (
               <li key={link.label}>
-                <a href={link.href} style={{ ...s.link, ...(isActive ? s.linkActive : {}) }}>
+                <Link href={link.href} style={{ ...s.link, ...(isActive ? s.linkActive : {}) }}>
                   {link.label}
-                </a>
+                </Link>
               </li>
             );
           })}
@@ -80,15 +81,15 @@ export default function Navbar() {
                   {user.role && <span style={s.dropRole}>{user.role}</span>}
                 </div>
                 <div style={s.dropDivider} />
-                <a href="/settings" style={s.dropItem} onClick={() => setDropOpen(false)}>⚙ Configuración</a>
-                <button style={{ ...s.dropItem, ...s.dropLogout }} onClick={handleLogout}>⎋ Cerrar sesión</button>
+                <Link href="/settings" style={s.dropItem} onClick={() => setDropOpen(false)}>⚙ Settings</Link>
+                <button style={{ ...s.dropItem, ...s.dropLogout }} onClick={handleLogout}>⎋ Sign out</button>
               </div>
             )}
           </div>
         ) : (
           <div style={s.authBtns}>
-            <button style={s.btnLogin} onClick={openLogin}>Iniciar sesión</button>
-            <button style={s.btnRegister} onClick={openRegister}>Registrarse</button>
+            <button style={s.btnLogin} onClick={openLogin}>Sign in</button>
+            <button style={s.btnRegister} onClick={openRegister}>Register</button>
           </div>
         )}
       </nav>
@@ -108,12 +109,12 @@ export default function Navbar() {
 
 const s = {
   nav: { display:"flex",alignItems:"center",gap:"6px",background:THEME.colors.navy,padding:"0 32px",height:"60px",position:"sticky",top:0,zIndex:100,boxShadow:THEME.shadow.nav,flexShrink:0 },
-  topAccent: { position:"absolute",top:0,left:0,right:0,height:"3px",background:`linear-gradient(90deg, ${THEME.colors.gold}, ${THEME.colors.tealLight})` },
-  brand: { display:"flex",alignItems:"center",gap:"8px",marginRight:"20px" },
+  topAccent: { position:"absolute",top:0,left:0,right:0,height:"3px",background:"linear-gradient(90deg, " + THEME.colors.gold + ", " + THEME.colors.tealLight + ")" },
+  brand: { display:"flex",alignItems:"center",gap:"8px",marginRight:"20px",textDecoration:"none" },
   brandIcon: { fontSize:"20px",color:THEME.colors.gold },
   brandText: { fontFamily:THEME.fonts.display,fontWeight:700,fontSize:"18px",color:"#fff",letterSpacing:"0.02em" },
-  links: { display:"flex",listStyle:"none",gap:"2px",flex:1 },
-  link: { display:"block",padding:"6px 13px",borderRadius:THEME.radius.sm,color:"rgba(255,255,255,0.7)",fontSize:"14px",fontWeight:600,transition:"all 0.15s" },
+  links: { display:"flex",listStyle:"none",gap:"2px",flex:1,margin:0,padding:0 },
+  link: { display:"block",padding:"6px 13px",borderRadius:THEME.radius.sm,color:"rgba(255,255,255,0.7)",fontSize:"14px",fontWeight:600,transition:"all 0.15s",textDecoration:"none" },
   linkActive: { background:THEME.colors.gold,color:THEME.colors.navy },
   searchWrap: { position:"relative",marginRight:"12px" },
   searchIcon: { position:"absolute",left:"10px",top:"50%",transform:"translateY(-50%)",color:"rgba(255,255,255,0.4)",fontSize:"16px",pointerEvents:"none" },
@@ -128,12 +129,12 @@ const s = {
   userName: { color:"rgba(255,255,255,0.85)",fontSize:"13px",fontWeight:600,maxWidth:"120px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" },
   chevron: { color:"rgba(255,255,255,0.5)",fontSize:"12px",transition:"transform 0.2s" },
   chevronOpen: { transform:"rotate(180deg)" },
-  dropdown: { position:"absolute",top:"calc(100% + 8px)",right:0,background:THEME.colors.card,border:`1px solid ${THEME.colors.border}`,borderRadius:THEME.radius.md,boxShadow:"0 12px 40px rgba(0,0,0,0.18)",minWidth:"200px",overflow:"hidden",animation:"slideUp 0.15s ease",zIndex:200 },
+  dropdown: { position:"absolute",top:"calc(100% + 8px)",right:0,background:THEME.colors.card,border:"1px solid " + THEME.colors.border,borderRadius:THEME.radius.md,boxShadow:"0 12px 40px rgba(0,0,0,0.18)",minWidth:"200px",overflow:"hidden",animation:"slideUp 0.15s ease",zIndex:200 },
   dropHeader: { padding:"14px 16px 12px" },
   dropName: { fontWeight:700,fontSize:"14px",color:THEME.colors.text,marginBottom:"2px" },
   dropEmail: { fontSize:"12px",color:THEME.colors.muted,marginBottom:"6px" },
-  dropRole: { display:"inline-block",background:"rgba(201,168,76,0.15)",color:THEME.colors.gold,border:`1px solid ${THEME.colors.gold}`,borderRadius:THEME.radius.full,padding:"1px 8px",fontSize:"11px",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em" },
+  dropRole: { display:"inline-block",background:"rgba(201,168,76,0.15)",color:THEME.colors.gold,border:"1px solid " + THEME.colors.gold,borderRadius:THEME.radius.full,padding:"1px 8px",fontSize:"11px",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em" },
   dropDivider: { height:"1px",background:THEME.colors.border },
-  dropItem: { display:"block",width:"100%",padding:"10px 16px",fontSize:"13px",color:THEME.colors.text,fontWeight:500,background:"none",border:"none",cursor:"pointer",textAlign:"left",fontFamily:THEME.fonts.body,transition:"background 0.12s" },
+  dropItem: { display:"block",width:"100%",padding:"10px 16px",fontSize:"13px",color:THEME.colors.text,fontWeight:500,background:"none",border:"none",cursor:"pointer",textAlign:"left",fontFamily:THEME.fonts.body,transition:"background 0.12s",textDecoration:"none" },
   dropLogout: { color:"#c53030",fontWeight:600 },
 };

@@ -1,18 +1,32 @@
 // app/settings/page.js
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import PageShell from "@/components/layout/PageShell";
 import { THEME } from "@/styles/theme";
 
-export const metadata = { title: "Configuración" };
-
 export default function SettingsPage() {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+
+  // Redirect to /unauthorized if not logged in or not an admin
+  useEffect(() => {
+    if (!isLoading && (!user || user.role !== "admin")) {
+      router.replace("/unauthorized");
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading || !user || user.role !== "admin") return null;
+
   return (
-    <PageShell title="Configuración" subtitle="Preferencias y ajustes de la wiki.">
+    <PageShell title="Settings" subtitle="Preferences and site configuration.">
       <div style={s.placeholder}>
         <span style={s.icon}>⚙️</span>
-        <p style={s.text}>Módulo de configuración en construcción.</p>
+        <p style={s.text}>Settings module under construction.</p>
         <p style={s.sub}>
-          Aquí irán las opciones de administración de usuarios, permisos y
-          configuración del sitio.
+          User management, permissions, and site configuration options will be available here.
         </p>
       </div>
     </PageShell>
